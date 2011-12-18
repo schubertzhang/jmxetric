@@ -1,0 +1,48 @@
+=========================================
+====== Changes by Schubert Zhang ========
+=========================================
+1. class XMLConfigurationService:
+   If there is no argument "mode" or/and "wireformat31x", do not use the hard-coded 
+   default values "multicast" and "false", which will let the jmxetric.xml config: 
+    <ganglia hostname="239.2.11.70" port="8649" mode="unicast" wireformat31x="true"/>
+   fails to set different mode and wireformat31x.
+   
+           if ( agentArgs != null ) {
+             String[] args = agentArgs.split(",");
+             host = getTagValue( "host", args, null );
+             port = getTagValue( "port", args, null );
+             config = getTagValue( "config", args, DEFAULT_CONFIG );
+             mode = getTagValue( "mode", args, null ); // **changed from: mode = getTagValue( "mode", args, DEFAULT_MODE );
+             wireformat = getTagValue( "wireformat31x", args, null );  // **changed from: wireformat = getTagValue( "wireformat31x", args, false );
+             processName = getTagValue( "process", args, null );
+          }
+   
+=========================================
+
+Changes in version 0.0.5
+#23 Publishing JMXetric jar file to a public Maven repo
+
+Changes in version 0.0.4
+
+#10 Attributes with composite values are not published correctly
+#11 If an attribute value is null, an exception is thrown as MBeanSampler attempts to publish it. 
+
+Changes in version 0.0.3
+
+Please note that the config file format has changed to support mbeans with a dot in the name. See the README or example file.
+
+* Built using Maven
+* #2 Compiled to target JVM 1.5 for legacy support
+* #3 NPE if <mbean> element has no "pname" attribute specified 
+* #4 Attributes with embedded "."s improperly parsed 
+* #5 Uninitialised mbeans cause exception on startup 
+* #7 Incorrect javaagent option sample in README 
+* #6 Slope is not defined in the config file so cannot use ganglia/rrd counter attributes 
+* Suppress exception (keep warning) in the event the mbean is slow to initialise on startup, also add initial delay parameter to config file
+
+Changes in version 0.0.2
+
+* Added support for the ganglia 3.1.* wire format. 
+* Added support for UDP unicast. 
+
+Thanks to Sam Tunnicliffe and Malcolm Landon for the patch.

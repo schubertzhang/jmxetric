@@ -1,0 +1,7 @@
+=========================================
+===== Comments by Schubert Zhang ========
+=========================================
+
+1. Fast Build
+mvn clean
+mvn package -Dmaven.test.skip=true
