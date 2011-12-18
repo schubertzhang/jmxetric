@@ -27,9 +27,32 @@
    <!ELEMENT jvm EMPTY>
       <!ATTLIST jvm process CDATA "">
 ]>
+
 <jmxetric-config>
+
+    <!--
+     ~ ************************************************************************
+     ~ <jvm process="ProcessName"/>
+     ~   A name that is prefixed to the metric name before publication (so that
+     ~   metrics from different JVMs on the same host can be determined).
+     ~   If the "process" name is specified in -javaagent arguments, 
+     ~   it overrides this specification.
+     ~ 
+     ~ <sample initialdelay="0" delay="60">
+     ~   In seconds. default initialdelay=0. default delay=60.
+     ~
+     ~ Support types: 
+     ~   string|int8|uint8|int16|uint16|int32|uint32|float|double
+     ~   for a long type, use double here.
+     ~
+     ~  The composite within a attribute should implement CompositeData.
+     ~ ************************************************************************
+     -->
+
 	<jvm process="ProcessName"/>
-	<sample delay="300">
+	
+	<sample initialdelay="10" delay="60">
+	
 		<mbean name="java.lang:type=Memory" pname="Memory">
 			<attribute name="HeapMemoryUsage">
 				<composite name="init" pname="Heap_init" type="int32" units="bytes"/>
@@ -44,14 +67,36 @@
 				<composite name="max" pname="NonHeap_max" type="int32" units="bytes" />
 			</attribute>
 		</mbean>
+		
 		<mbean name="java.lang:type=Threading" pname="Threading" >
 			<attribute name="ThreadCount" type="int16" />
 			<attribute name="DaemonThreadCount" type="int16" />
 		</mbean>
+		
 		<mbean name="java.lang:type=OperatingSystem" pname="OS" >
 			<attribute name="ProcessCpuTime" type="int32" slope="positive"/>
 		</mbean>
+		
 	</sample>
+	
+	<!--
+     ~ ************************************************************************
+     ~ Specify the configuration of ganglia gmond. These attributes can also
+     ~ be defined in -javaagent arguments in java commandline. e.g: 
+     ~ -javaagent:/full/path/to/jmxetric.jar=host=239.2.11.70,port=8649,
+     ~ mode=multicast,wireformat31x=true,config=/full/path/to/jmxetric.xml.
+     ~ But, if they are specified in -javaagent arguments, following attributes
+     ~ will be overrided.
+     ~ 
+     ~ hostname,port: The multicast address that is used to publish metrics
+     ~                to the ganglia gmond.
+     ~ mode:          The UDP addressing mode, either multicast or unicast
+     ~                (default multicast).
+     ~ wireformat31x: True if the ganglia v3.1.x wire format should be used
+     ~                (default false).
+     ~ ************************************************************************
+     -->
 	<ganglia hostname="localhost" port="8649" mode="multicast" wireformat31x="true" />
+	
 </jmxetric-config>
 
